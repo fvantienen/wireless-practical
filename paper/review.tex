@@ -2,13 +2,14 @@
 \usepackage{a4wide}
 
 \begin{document}
+\bibliographystyle{plain}
 
 \title{Review: Efficient Broadcast on Fragmented Spectrum in Cognitive Radio Networks}
 \author{Freek van Tienen \\ 4094123}
 \date{22-03-2016}
 \maketitle
 
-This paper indicates a method to efficiently broadcast in Fragmented Spectrum, we start with the broadcast intention.
+This paper\cite{7218377} indicates a method to efficiently broadcast in Fragmented Spectrum, we start with the broadcast intention.
 In effort to make this work it uses an $N$-point IFFT to encode a single OFDM random intentation sequence and the broadcaster transmits this with a cyclic prefix of itself in all available channels for the transmitter.
 The receiver then performs an $N$-point FFT each time a new sample is obtained and uses convolution to detect spikes and with that a possible broadcast.
 It will then decode the unicast sequence of the broadcaster and look it up the the neighbour table.
@@ -33,4 +34,5 @@ Also no statements where made about the false detection of broadcast intentions 
 Next to that the setup phase of the nodes and the selection of unicast sequences is left out of the paper, which doesn't show how usable the system really is.
 No information is given on how many unicast sequences can be generated and how they interfere with each other when they are convoluted.
 
+\bibliography{review}
 \end{document}
