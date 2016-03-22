@@ -1,0 +1,36 @@
+\documentclass[]{article}
+\usepackage{a4wide}
+
+\begin{document}
+
+\title{Review: Efficient Broadcast on Fragmented Spectrum in Cognitive Radio Networks}
+\author{Freek van Tienen \\ 4094123}
+\date{22-03-2016}
+\maketitle
+
+This paper indicates a method to efficiently broadcast in Fragmented Spectrum, we start with the broadcast intention.
+In effort to make this work it uses an $N$-point IFFT to encode a single OFDM random intentation sequence and the broadcaster transmits this with a cyclic prefix of itself in all available channels for the transmitter.
+The receiver then performs an $N$-point FFT each time a new sample is obtained and uses convolution to detect spikes and with that a possible broadcast.
+It will then decode the unicast sequence of the broadcaster and look it up the the neighbour table.
+The receiver will then transmit his own unicast sequence after $priority * 2$ QFDM symbols on all available channels for him.
+When the broadcaster received all the unicast sequences it  uses a greedy algorithm to select the best channel combination scheme that provides maximum channel width.
+It then communicates this by adding up all the unicast sequences for the specific channel and transmits this.
+
+To analyse the effectiveness of the convolution-based spectrum agreement they use the GNU Radio / USRP platform.
+To show the advantages of SFAB they use NS-2 to simulate how narrowband interference affects both media access opportunities at the sender and the data receiving at the receivers.
+
+\section*{Review}
+One of the main things that is missing in the paper is the scalability of this broadcasting protocol.
+The simulations in NS-2 are only done with 10 wide-band devices and the tests with USPR only with 1 broadcaster and 1 receiver. 
+
+The measurements are only showing averages, but no variance or standard deviation.
+There is also no information about the repeatability and amount of test runs of the experiments in NS-3 and USRP.
+Because also no source code is provided, people cannot confirm these test results.
+
+The comparison between 802.11 and spectrum-agile only shows the advantages of SFAB, but no tests where shown in non-interference situations.
+Also no statements where made about the false detection of broadcast intentions or unicast sequences or not detecting them.
+
+Next to that the setup phase of the nodes and the selection of unicast sequences is left out of the paper, which doesn't show how usable the system really is.
+No information is given on how many unicast sequences can be generated and how they interfere with each other when they are convoluted.
+
+\end{document}
