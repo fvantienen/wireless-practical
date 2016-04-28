@@ -4,7 +4,7 @@
 \usepackage{float}
 \usepackage{listings}
 \usepackage{url}
-\lstset{language=Python}
+\lstset{language=Python, tabsize=2, basicstyle=\small, breaklines=true}
 
 \begin{document}
 \bibliographystyle{plain}
@@ -91,8 +91,8 @@ In Figure \ref{fig:dvbt_check} can be seen how this check is implemented in the 
 
 \begin{figure}[H]
 \begin{lstlisting}[frame=bt]
-dvbt_freq = [498, 522, 698, 722, 762] 	# The DVB-T frequencies in Delft
-dvbt_width = 7.61			# Width of a DVB-T channel in MHz
+dvbt_freq = [498, 522, 698, 722, 762]  	# The DVB-T frequencies in Delft
+dvbt_width = 7.61                       # Width of a DVB-T channel in MHz
 
 # Check if this is an actual DVB-T station
 is_dvbt = False
