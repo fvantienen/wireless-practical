@@ -71,18 +71,18 @@ main (int argc, char *argv[])
   wifi.SetStandard (WIFI_PHY_STANDARD_80211b); // Set to 802.11b
 
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default ();
-  wifiPhy.Set ("RxGain", DoubleValue (0)); // Variable??
+  wifiPhy.Set ("RxGain", DoubleValue (0));
   wifiPhy.SetPcapDataLinkType (YansWifiPhyHelper::DLT_IEEE802_11_RADIO);
 
   YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
   wifiChannel.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
-  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel", "Rss", DoubleValue (-80)); // Variable??
+  wifiChannel.AddPropagationLoss ("ns3::FixedRssLossModel", "Rss", DoubleValue (-80));
   wifiPhy.SetChannel (wifiChannel.Create ());
 
   NqosWifiMacHelper wifiMac = NqosWifiMacHelper::Default ();
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
-                                "DataMode", StringValue ("DsssRate11Mbps"), // Variable??
-                                "ControlMode", StringValue ("DsssRate11Mbps")); // Variable??
+                                "DataMode", StringValue ("DsssRate11Mbps"),
+                                "ControlMode", StringValue ("DsssRate11Mbps"));
 
   Ssid ssid = Ssid ("ns3-80211b");
   // Setup STA's
