@@ -5,6 +5,13 @@ This is a basic energy detector for DVB-T channels using GNU-radio.
 - Execute `./dvbt_detector.py` (For help execute `./dvbt_detector.py --help`).
 - Run `./gen_graphs.py` to generate the graphs.
 
+## Requirements
+- GNU Radio
+- sklearn (Python package)
+- scipy (Python package)
+- numpy (Python package)
+- matplotlib (Python package)
+
 ## Detector options
 ```
 Usage: dvbt_detector.py [options]
