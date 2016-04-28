@@ -9,7 +9,7 @@ mpl.use('pgf')
 
 # Variables
 dvbt_freq = [498, 522, 698, 722, 762] 	# The DVB-T frequencies in Delft
-dvbt_width = 7.61						# Width of an DVB-T channel in MHz
+dvbt_width = 7.61						# Width of a DVB-T channel in MHz
 random_cnt = 10000						# Amount of random number generated
 input_file = "results/detector.csv"		# The input file from the DVB-T detector
 output_file_prefix = ""					# Output file prefix for the figures

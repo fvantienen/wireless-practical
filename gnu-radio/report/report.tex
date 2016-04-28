@@ -1,6 +1,10 @@
 \documentclass[]{article}
 \usepackage{a4wide}
 \usepackage{pgf}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{url}
+\lstset{language=Python}
 
 \begin{document}
 \bibliographystyle{plain}
@@ -20,25 +24,131 @@ Making a perfect detector is difficult, since most of these detectors are prone 
 In this document we describe an implementation of such a detector using GNU Radio, and analyse it's performance.
 \end{abstract}
 
-\section{Introduction}
+%\section{Introduction}
 
 \section{Problem description}
+When we want to use the restricted spectrum we have to make sure we don't interfere with the original signal purposed for this specific spectrum.
+This means we have to be able to detect the original signal in this spectrum and avoid these frequencies.
+For the purpose of this experiment we have chosen the DVB-T spectrum, which in most cities has vast amount of white spaces.
 
+There are several ways of detecting if a signal is present and one of the most easy ways is the use of an energy detector.
+This energy detector calculates the energy that is being measured for a certain frequency.
+Based on this calculated energy it decides whether the frequency is free or used by a DVB-T channel.
+Hence the name energy detector.
+
+To be able to measure the performance of such an detector a ROC can be used.
+This will show us the amount of True Positive errors versus the amount of False Positive errors.
+In the next chapter a design of such an energy detector is described and an automated way of generating these ROC curves is shown.
+
+\newpage
 \section{Design and implementation}
+The design of the energy detector is based on the sample design given in the Wireless Networking course.
+Some small adjustments were made in order to automate the experiment for reproducibility.
+The basic design of the energy detector is made in GNU Radio Companion, which generates python code.
+The result can be seen in Figure \ref{fig:gnu_comp}.
+
+\begin{figure}[H]
+    \includegraphics[width=0.9\textwidth]{gnuradio_companion.png}
+    \caption{GNU Radio Companion implementation.\label{fig:gnu_comp}}
+\end{figure}
+
+The main adjustment in the energy detector is the addition of an "Moving Average" block after the computation of the energy level. This is done to stabilise the measurement, since the initial calculation of the energy level was very noisy. The second adjustment that was made was the adding of "Probe" blocks which were added for the easy access to both the signal level and the detection state trough python code.
+This was needed in order to automate the fetching of the results.
+
+Now in order to automate the generation of a ROC curve a simple python script was made to automatically perform measurements of the energy level.
+This script can be seen in Figure \ref{fig:energy_det}.
+
+\begin{figure}[H]
+\begin{lstlisting}[frame=bt]
+# Set the detection level
+scanner.set_threshold(threshold)
+
+# Go trough the frequencies
+for freq in range(int(freq_min*1e6), int(freq_max*1e6), int(freq_step*1e6)):
+	# Set the frequency
+	scanner.set_freq(freq)
+
+	# Wait for some time
+	time.sleep(wait_time)
+
+	# Do the measurement
+	freq_mhz = freq / 1e6
+	signal_level = scanner.get_signal_level()
+	detected = scanner.get_detected()
+	f.write("%.2f,%.2f,%.2f,%d\n" % (freq_mhz, threshold, signal_level, detected))
+\end{lstlisting}
+\caption{Energy detection scanner.\label{fig:energy_det}}
+\end{figure}
+
+As can be seen, this script scans trough the frequencies with \textit{freq\_step}.
+And for each frequency it will set the frequency, wait for some time to make sure the moving average is stable.
+Then it will get the signal level and the detected state and log this to a csv file.
+
+After the measurements are taken an ROC curve must be generated.
+In order to do this we need to have a way to verify if there really is a DVB-T channel on a certain frequency.
+This is done by looking up online at which frequencies the stations are for a specific city, in this case Delft.
+In Figure \ref{fig:dvbt_check} can be seen how this check is implemented in the ROC graph script.
+
+\begin{figure}[H]
+\begin{lstlisting}[frame=bt]
+dvbt_freq = [498, 522, 698, 722, 762] 	# The DVB-T frequencies in Delft
+dvbt_width = 7.61			# Width of a DVB-T channel in MHz
+
+# Check if this is an actual DVB-T station
+is_dvbt = False
+for freq in dvbt_freq:
+	if (freq - dvbt_width/2) < float(row[0]) < (freq + dvbt_width/2):
+		is_dvbt = True
+		break
+\end{lstlisting}
+\caption{DVB-T check.\label{fig:dvbt_check}}
+\end{figure}
+
+To generate the ROC curve a python package called \textit{sklearn} can be used.
+This needs both the actual values(if a certain frequency is an actual DVB-T channel) and the measurements(of the signal level) as input.
+It will then calculate both the false positive rate and true positive rate, which are then plotted on the x and y axis.
+But to simulate the results as a normal distribution some statistics are calculated, like the mean and standard deviation.
+Then random numbers will be generated from these distributions in order to generate a PDF graph.
+Also a new ROC will be generated based on the normally distributed signals.
+This can be seen in Figure \ref{fig:roc_gen}.
+
+\begin{figure}[H]
+\begin{lstlisting}[frame=bt]
+# Calculate statistics
+(pos_mean, pos_std, pos_rvs, pos_pdf, pos_cdf) = calc_statistics(positive_meas)
+(neg_mean, neg_std, neg_rvs, neg_pdf, neg_cdf) = calc_statistics(negative_meas)
+
+# Plot the PDF graph
+plot_pdf_curve(pos_rvs, pos_pdf, neg_rvs, neg_pdf, "pdf")
+
+# Calculate the ROC based on statistics
+curve_x = []
+curve_y = []
+for x in np.arange(-85, -65, 0.1):
+	curve_x.append(neg_cdf[find_nearest(pos_rvs, x)])
+	curve_y.append(pos_cdf[find_nearest(neg_rvs, x)])
+
+# Plot the ROC curve base on statistics
+plot_roc_curve(curve_x, curve_y, "roc_norm")
+\end{lstlisting}
+\caption{ROC and PDF curve generation.\label{fig:roc_gen}}
+\end{figure}
+
+The full source code is available on GitHub (\url{https://github.com/fvantienen/wireless-practical}).
 
 \section{Results}
 
-\begin{figure}
+\begin{figure}[H]
     \input{../results/tanthof_indoor_pdf.pgf}
     \caption{PDF curve from Tanthof based on Normal distribution.\label{fig:pdf_tant_norm}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \input{../results/tanthof_indoor_roc_real.pgf}
     \caption{ROC curve from Tanthof based on real measured data\label{fig:roc_tant_real}}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \input{../results/tanthof_indoor_roc_norm.pgf}
     \caption{ROC curve from Tanthof based on Normal distribution.\label{fig:roc_tant_norm}}
 \end{figure}
