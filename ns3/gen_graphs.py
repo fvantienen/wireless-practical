@@ -6,7 +6,8 @@ import cmath
 mpl.use('pgf')
 
 # Variables
-data_rates = ['5Mbps', '2Mbps', '1Mbps', '500Kbps', '100Kbps']
+data_rates = ['5Mbps', '2Mbps', '1Mbps', '500Kbps', '100Kbps']  # Different data rates used for simulation
+packet_sizes = [512, 1024]                                      # Different packet sizes used for simulation
 
 # Calculate figure size based on LaTex text width
 def figsize(scale):
@@ -112,8 +113,9 @@ def plot_throughput(stas, throughput_tot, throughput_mean, throughput_err, filen
 
 # Main function
 if __name__ == '__main__':
-    # Go through the datarates
-    for dr in data_rates:
-        (stas, throughput_tot, throughput_mean, throughput_err) = read_measurements("results/%s.csv" % dr)
-        plot_throughput(stas, throughput_tot, throughput_mean, throughput_err, "results/%s" % dr)
+    # Go through the datarates and packet sizes
+    for ps in packet_sizes:
+        for dr in data_rates:
+            (stas, throughput_tot, throughput_mean, throughput_err) = read_measurements("results/%s_%s.csv" % (ps, dr))
+            plot_throughput(stas, throughput_tot, throughput_mean, throughput_err, "results/%s_%s" % (ps, dr))
 

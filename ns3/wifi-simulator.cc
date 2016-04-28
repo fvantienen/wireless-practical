@@ -46,6 +46,8 @@ main (int argc, char *argv[])
   cmd.AddValue ("of", "The output file for the data.", outputFilename);
   string dataRate = "5Mbps";
   cmd.AddValue ("dr", "The datarate from STA's -> AP", dataRate);
+  uint32_t packetSize = 1024;
+  cmd.AddValue ("ps", "The packet size used to send packets", packetSize);
   cmd.Parse (argc, argv);
 
   /* Make sure the simulation is random */
@@ -136,7 +138,7 @@ main (int argc, char *argv[])
 	  OnOffHelper staOnOff ("ns3::TcpSocketFactory", staAddress);
 	  staOnOff.SetAttribute ("OnTime",  StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
 	  staOnOff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-	  staOnOff.SetAttribute ("PacketSize", UintegerValue (1024)); // Variable?
+	  staOnOff.SetAttribute ("PacketSize", UintegerValue (packetSize));
 	  staOnOff.SetAttribute ("DataRate", StringValue (dataRate));
 	  staOnOff.SetAttribute ("Remote", AddressValue (apAddress));
 
