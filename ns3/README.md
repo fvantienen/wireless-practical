@@ -7,7 +7,7 @@ This is a basic NS3 simulation to test the throughput of several situations in 8
 - Run `./gen_graphs.py` to generate the graphs.
 
 ## Requirements
-- GNU Radio
+- NS3
 - matplotlib (Python package)
 - cmath (Python package)
 - numpy (Python package)
