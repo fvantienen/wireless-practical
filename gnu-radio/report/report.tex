@@ -1,0 +1,49 @@
+\documentclass[]{article}
+\usepackage{a4wide}
+\usepackage{pgf}
+
+\begin{document}
+\bibliographystyle{plain}
+
+\title{GNU Radio Energy Detector}
+\author{Freek van Tienen \\ 4094123}
+\date{28-04-2016}
+\maketitle
+
+\begin{abstract}
+Due to regulations a lot of the usable radio spectrum is restricted.
+These restrictions are regulated per country and only small proportions of the total spectrum is available for use.
+But since these free to use bands are currently used a lot, due to the increase of wireless usage all around the world, it becomes more  and more difficult to propagate a signal in these bands.
+Therefore new techniques have come around, like cognitive radio.
+Cognitive radio makes use of the restricted radio spectrum, by detecting if this spectrum is used at a certain moment.
+Making a perfect detector is difficult, since most of these detectors are prone to errors.
+In this document we describe an implementation of such a detector using GNU Radio, and analyse it's performance.
+\end{abstract}
+
+\section{Introduction}
+
+\section{Problem description}
+
+\section{Design and implementation}
+
+\section{Results}
+
+\begin{figure}
+    \input{../results/tanthof_indoor_pdf.pgf}
+    \caption{PDF curve from Tanthof based on Normal distribution.\label{fig:pdf_tant_norm}}
+\end{figure}
+
+\begin{figure}
+    \input{../results/tanthof_indoor_roc_real.pgf}
+    \caption{ROC curve from Tanthof based on real measured data\label{fig:roc_tant_real}}
+\end{figure}
+
+\begin{figure}
+    \input{../results/tanthof_indoor_roc_norm.pgf}
+    \caption{ROC curve from Tanthof based on Normal distribution.\label{fig:roc_tant_norm}}
+\end{figure}
+
+\section{Conclusion}
+
+\bibliography{report}
+\end{document}

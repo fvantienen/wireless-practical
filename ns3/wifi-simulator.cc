@@ -34,21 +34,25 @@ main (int argc, char *argv[])
   string experiment ("wifi-speed-sta-test");
   string strategy ("wifi-default");
 
-  /* Make sure the simulation is random */
-  time_t timev;
-  time(&timev);
-  RngSeedManager::SetSeed (timev);
-  RngSeedManager::SetRun (7);
-
   /* Get command line parameters */
   CommandLine cmd;
   double simulationTime = 10.0;
   cmd.AddValue ("time", "The simulation time.", simulationTime);
   uint32_t staCount = 1;
   cmd.AddValue ("stas", "The amount of STA's to create.", staCount);
+  uint32_t runNumber = 1;
+  cmd.AddValue ("run", "The number of this run.", runNumber);
   string outputFilename = "data.csv";
-  cmd.AddValue ("outputFile", "The output file for the data.", outputFilename);
+  cmd.AddValue ("of", "The output file for the data.", outputFilename);
+  string dataRate = "5Mbps";
+  cmd.AddValue ("dr", "The datarate from STA's -> AP", dataRate);
   cmd.Parse (argc, argv);
+
+  /* Make sure the simulation is random */
+  time_t timev;
+  time(&timev);
+  RngSeedManager::SetSeed (timev);
+  RngSeedManager::SetRun (runNumber);
 
   /* Create output file */
   std::ofstream outputStream (outputFilename.c_str (), ios::app);
@@ -95,9 +99,9 @@ main (int argc, char *argv[])
   MobilityHelper mobility;
   Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
 
-  positionAlloc->Add (Vector (0.0, 0.0, 0.0));
+  positionAlloc->Add (Vector (0.0, 0.0, 3.0));
   for(uint16_t i = 0; i < staCount; i++)
-	  positionAlloc->Add (Vector (5.0, 0.0, 0.0));
+	  positionAlloc->Add (Vector (3.0, 3.0, 0.0));
 
   mobility.SetPositionAllocator (positionAlloc);
   mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
@@ -133,7 +137,7 @@ main (int argc, char *argv[])
 	  staOnOff.SetAttribute ("OnTime",  StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
 	  staOnOff.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
 	  staOnOff.SetAttribute ("PacketSize", UintegerValue (1024)); // Variable?
-	  staOnOff.SetAttribute ("DataRate", StringValue ("5Mbps")); // Variable?
+	  staOnOff.SetAttribute ("DataRate", StringValue (dataRate));
 	  staOnOff.SetAttribute ("Remote", AddressValue (apAddress));
 
 	  ApplicationContainer staApp = staOnOff.Install (staNodes.Get (i));
@@ -142,12 +146,12 @@ main (int argc, char *argv[])
   }
 
   /* Setup flow monitor */
-  NS_LOG_INFO("Setup flow monitor.");
+  NS_LOG_INFO ("Setup flow monitor.");
   FlowMonitorHelper flowHelper;
   Ptr<FlowMonitor> flowMonitor = flowHelper.InstallAll ();
 
   /* Run the simulation */
-  NS_LOG_INFO("Start simulation.");
+  NS_LOG_INFO ("Start simulation.");
   Simulator::Stop (Seconds(simulationTime));
   Simulator::Run ();
   NS_LOG_INFO ("Done running simulation.");
@@ -181,6 +185,12 @@ main (int argc, char *argv[])
   double throughputVariance = (throughputSumSq - (powf(throughputSum, 2) / staCount)) / staCount;
   double troughputStd = sqrtf(throughputVariance);
   std::cout << "Overview:\n";
+  std::cout << "  Time:   " << simulationTime << endl;
+  outputStream << simulationTime << ",";
+  std::cout << "  STA count:   " << staCount << endl;
+  outputStream << staCount << ",";
+  std::cout << "  Throughput sum:     " << throughputSum << endl;
+  outputStream << throughputSum << ",";
   std::cout << "  Throughput mean:     " << throughputMean << endl;
   outputStream << throughputMean << ",";
   std::cout << "  Throughput variance: " << throughputVariance << endl;
