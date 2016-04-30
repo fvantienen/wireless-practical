@@ -41,7 +41,8 @@ Next to that we assume that no one is interfering on our frequency and there is 
 With all the above mentioned assumptions we want to analyse the throughput performance in the network under several conditions.
 We want to analyse what the amount of STA's in a network would mean in comparison to the data rates these STA's communicate to the AP.
 Also we want to take a look at what the influence of a change in packet size is for the total and average throughput in the network.
-In the next chapter we describe how we implement such simulation in NS3 and automate these result to improve replicability.
+This leads us to our main question: "What will be the effect of the throughput on a 802.11b network with a single AP in comparison to the number of STA's". 
+In the next chapter we describe how we implement such simulation in NS3 and automate the gathering of the result in order to improve replicability.
 
 \newpage
 \section{Design and implementation}
@@ -186,37 +187,93 @@ for packet_size in packet_sizes:
 Then as last a new python script will be run to generate the graphs to visualise the in this paper.
 For both the total throughput and the average throughput also the variance and standard deviation are calculated between all the 5 different runs.
 But after analysing these result for the average throughput it seemed that the variances was almost 0 and thus the conclusion was made to leave out these results since they didn't add any value.
+Instead the maximum amount of standard deviation between different STA's was shown.
 
 The source code for all these scripts can be found on GitHub(\url{https://github.com/fvantienen/wireless-practical}), including the results.
 
+\newpage
 \section{Results}
+The simulations of this 802.11b network are run on a Macbook Air from 2013 in Mac OS, with a Intel Core i7 1.7GHz processor and 8GB of RAM.
+Multiple simulations were run in parallel in order to speed up the process.
+In total 2000 simulations were run and 400 different type of simulations were run.
+Each run simulated 10 seconds of full traffic between STA's and AP, and in total 2 different type of packet sizes were chosen (1024 bytes and 512 bytes).
 
 \begin{figure}[H]
-    \input{../results/1024_5Mbps.pgf}
-   \caption{5Mbps troughput curve with packet size of 1024 bytes.\label{fig:tp_5}}
+   \input{../results/1024_5Mbps.pgf}
+   \caption{5Mbps with packet size of 1024 bytes.\label{fig:tp_5}}
 \end{figure}
+\begin{figure}[H]
+    \input{../results/512_5Mbps.pgf}
+   \caption{5Mbps with packet size of 512 bytes.\label{fig:tp5_5}}
+\end{figure}
+
+In Figure \ref{fig:tp_5} and Figure \ref{fig:tp5_5} we see the throughput of an 802.11b network with a data rate of 5Mbps per node from the AP to the STA.
+It shows us that there is practically no difference between a packet size of 1024 and 512 if we look at the total amount of throughput and the average amount of throughput per STA.
+Although for the lower packet size it seems that there is less deviation of throughput between the STA's, which could mean that they have a more stable connection.
+Both the 1024 and 512 sized packets stabilises into the same maximum throughput.
 
 \begin{figure}[H]
     \input{../results/1024_2Mbps.pgf}
-   \caption{2Mbps troughput curve  with packet size of 1024 bytes.\label{fig:tp_2}}
+   \caption{2Mbps with packet size of 1024 bytes.\label{fig:tp_2}}
 \end{figure}
+\begin{figure}[H]
+    \input{../results/512_2Mbps.pgf}
+   \caption{2Mbps with packet size of 512 bytes.\label{fig:tp5_2}}
+\end{figure}
+
+The second run of 2Mbps shows us (in Figure \ref{fig:tp_2} and Figure \ref{fig:tp5_2}) that it takes longer to reach the stabilised total throughput, but on average the behaviour of the network is roughly the same as the 5 Mbps runs.
+Although you can clearly see here that there is a huge difference in deviation of the STA's between the 512 and 1024 sized packets.
+The 512 sized packets seem to reduce the mount of deviation in the lower STA count region (4 to 10 STA's).
+Also we can see that the total throughput is slowly declining if the amount of STA's increases.
 
 \begin{figure}[H]
     \input{../results/1024_1Mbps.pgf}
-   \caption{1Mbps troughput curve  with packet size of 1024 bytes.\label{fig:tp_1}}
+   \caption{1Mbps with packet size of 1024 bytes.\label{fig:tp_1}}
 \end{figure}
+\begin{figure}[H]
+    \input{../results/512_1Mbps.pgf}
+   \caption{1Mbps with packet size of 512 bytes.\label{fig:tp5_1}}
+\end{figure}
+
+\newpage
+In the third run of 1Mbps data rate is shown in Figure \ref{fig:tp_1} and Figure \ref{fig:tp5_1}.
+Here you can see a specific case at the STA count of 4, where actually the deviation between STA's in the 1024 sized packets is much lower than the one from the 512 sized packets.
+This seems like an anomaly and can be described by the fact that these simulations are completely randomised and thus such anomalies can exists if the amount test runs isn't enough.
 
 \begin{figure}[H]
     \input{../results/1024_500Kbps.pgf}
-   \caption{500Kbps troughput curve  with packet size of 1024 bytes.\label{fig:tp_500}}
+   \caption{500Kbps with packet size of 1024 bytes.\label{fig:tp_500}}
 \end{figure}
+\begin{figure}[H]
+    \input{../results/512_500Kbps.pgf}
+   \caption{500Kbps with packet size of 512 bytes.\label{fig:tp5_500}}
+\end{figure}
+
+\newpage
+Going even to lower data rates like 500Kbps (which is shown in Figure \ref{fig:tp_500} and \ref{fig:tp5_500}) you are  able to see the stabilisation phase of the total throughput even better.
+In this stabilisation phase you see clearly that there is no deviation between the STA's and the maximum throughput.
+This can be declared by the fast that all STA's can transmit with there full data rate without any limitations in the total throughput in the network.
+In these graphs the effect between the 1024 and 512 sized packets cannot be seen that much anymore, because mostly the part where it had effect in the previous graphs is the part where the STA's can reach their full data rate.
 
 \begin{figure}[H]
     \input{../results/1024_100Kbps.pgf}
-   \caption{100Kbps troughput curve  with packet size of 1024 bytes.\label{fig:tp_100}}
+   \caption{100Kbpswith packet size of 1024 bytes.\label{fig:tp_100}}
+\end{figure}
+\begin{figure}[H]
+    \input{../results/512_100Kbps.pgf}
+   \caption{100Kbps with packet size of 512 bytes.\label{fig:tp5_100}}
 \end{figure}
 
-\section{Conclusion}
+At the lowest data rate of 100Kbps we can see in Figure \ref{fig:tp_100} and Figure \ref{fig:tp5_100} that the network with large amount of STA's doesn't influence the total throughput.
+This means that the overhead of having lot's of STA's isn't as much as having one STA with a high data rate.
+This can be concluded from the steepness of the curve which is exactly $1/5$ of the 500Kbps curve.
 
-\bibliography{report}
+\section{Conclusion}
+To conclude I would like to say that large amount of STA's on a single AP does effect bot the total throughput and average throughput in several ways.
+If you look closely at the above presented graphs you can see at high data rates the total amount of throughput stays almost the same if it reached it's maximum.
+Although a slight overhead is present and can be seen by the slow decline in total throughput.
+
+Next to that the lower packet sizes help to reduce the amount of deviation between STA's when the overall network hasn't reached it's total throughput yet.
+And since the overhead is really low, having multiple STA's with low data rate versus having one STA with a really high data rate doesn't seem to be leading into a different total throughput or average STA throughput.
+
 \end{document}

@@ -27,8 +27,8 @@ pgf_with_latex = {                      # setup matplotlib to use latex for outp
     "font.serif": [],                   # blank entries should cause plots to inherit fonts from the document
     "font.sans-serif": [],
     "font.monospace": [],
-    "axes.labelsize": 10,               # LaTeX default is 10pt font.
-    "font.size": 9,
+    "axes.labelsize": 8,                # LaTeX default is 10pt font.
+    "font.size": 8,
     "legend.fontsize": 8,               # Make the legend/label fonts a little smaller
     "xtick.labelsize": 8,
     "ytick.labelsize": 8,
@@ -50,6 +50,7 @@ def new_plot(width):
 
 # Save a plot
 def save_plot(filename):
+    plt.tight_layout()
     plt.savefig('{}.pgf'.format(filename))
     plt.savefig('{}.pdf'.format(filename))
 
@@ -74,6 +75,7 @@ def read_measurements(input_file):
                 throughput[stas]['tot_sq'] += pow(float(row[2]), 2)
                 throughput[stas]['var'] = (throughput[stas]['tot_sq'] - (pow(throughput[stas]['tot'], 2) / throughput[stas]['cnt'])) / throughput[stas]['cnt'];
                 throughput[stas]['std'] = cmath.sqrt(throughput[stas]['var'])
+                throughput[stas]['max_std'] = max(float(row[5]), throughput[stas]['max_std'])
             else:
                 throughput[stas] = {}
                 throughput[stas]['cnt'] = 1
@@ -84,27 +86,31 @@ def read_measurements(input_file):
                 throughput[stas]['tot_sq'] = pow(float(row[2]), 2)
                 throughput[stas]['var'] = 0
                 throughput[stas]['std'] = 0
+                throughput[stas]['max_std'] = float(row[5])
             
 
     #Calculate total and mean
     throughput_tot = range(len(throughput))
     throughput_mean = range(len(throughput))
     throughput_err = range(len(throughput))
+    throughput_err2 = range(len(throughput))
     stas_nb = range(len(throughput))
     for stas in throughput:
         stas_nb[stas-1] = stas
         throughput_tot[stas-1] = throughput[stas]['tot_avg']
         throughput_mean[stas-1] = throughput[stas]['avg']
         throughput_err[stas-1] = throughput[stas]['std']
+        throughput_err2[stas-1] = throughput[stas]['max_std']
 
     # Return information
-    return (stas_nb, throughput_tot, throughput_mean, throughput_err)
+    return (stas_nb, throughput_tot, throughput_mean, throughput_err, throughput_err2)
 
 # Plot throughput
-def plot_throughput(stas, throughput_tot, throughput_mean, throughput_err, filename):
+def plot_throughput(stas, throughput_tot, throughput_mean, throughput_err, throughput_err2, filename):
     # Generate the plot
     fig, ax = new_plot(0.9)
-    ax.plot(stas, throughput_mean, 'b', label='Average throughput')
+    #ax.plot(stas, throughput_mean, 'b', label='Average throughput')
+    ax.errorbar(stas, throughput_mean, yerr=throughput_err2, fmt='b', label='Average throughput')
     ax.errorbar(stas, throughput_tot, yerr=throughput_err, fmt='r', label='Total throughput')
     ax.legend(loc='center right')
     ax.set_ylabel('Throughput MBps')
@@ -116,6 +122,6 @@ if __name__ == '__main__':
     # Go through the datarates and packet sizes
     for ps in packet_sizes:
         for dr in data_rates:
-            (stas, throughput_tot, throughput_mean, throughput_err) = read_measurements("results/%s_%s.csv" % (ps, dr))
-            plot_throughput(stas, throughput_tot, throughput_mean, throughput_err, "results/%s_%s" % (ps, dr))
+            (stas, throughput_tot, throughput_mean, throughput_err, throughput_err2) = read_measurements("results/%s_%s.csv" % (ps, dr))
+            plot_throughput(stas, throughput_tot, throughput_mean, throughput_err, throughput_err2, "results/%s_%s" % (ps, dr))
 
