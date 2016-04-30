@@ -141,23 +141,60 @@ plot_roc_curve(curve_x, curve_y, "roc_norm")
 The full source code is available on GitHub (\url{https://github.com/fvantienen/wireless-practical}).
 
 \section{Results}
-
-\begin{figure}[H]
-    \input{../results/tanthof_indoor_pdf.pgf}
-    \caption{PDF curve from Tanthof based on Normal distribution.\label{fig:pdf_tant_norm}}
-\end{figure}
+At two different locations measurements were taken in order to generate ROC curves.
+The first location was at Tanthof inside my student room close to the window at the 7th floor next to other high flats.
+The second location was inside the Aerospace building in a room without any outside walls or windows.
+For the tests a frequency range from 400MHz to 800MHz with a step of 0.5MHz was scanned and checked for the energy level for detecting DVB-T channels.
 
 \begin{figure}[H]
     \input{../results/tanthof_indoor_roc_real.pgf}
     \caption{ROC curve from Tanthof based on real measured data\label{fig:roc_tant_real}}
 \end{figure}
+\begin{figure}[H]
+    \input{../results/lr_indoor_roc_real.pgf}
+    \caption{ROC curve from LR based on real measured data\label{fig:roc_lr_real}}
+\end{figure}
+
+\newpage
+Base on the real data the ROC were generated and can be seen in Figure \ref{fig:roc_tant_real} and Figure \ref{fig:roc_lr_real}.
+Here we can see that at Aerospace)the amount of false positives is slightly bigger than the ones from Tanthof.
+Which can be described by the effect of propagation through concrete, which is more difficult for higher frequencies.
+This makes these channel's energy more difficult to detect between the noise.
+Both of these graphs have a very high AUC number from which you could conclude that this is an effective way of detecting DVB-T channels.
+
+\begin{figure}[H]
+    \input{../results/tanthof_indoor_pdf.pgf}
+    \caption{PDF curve from Tanthof based on Normal distribution.\label{fig:pdf_tant_norm}}
+\end{figure}
+\begin{figure}[H]
+    \input{../results/lr_indoor_pdf.pgf}
+    \caption{PDF curve from Aerospace based on Normal distribution.\label{fig:pdf_lr_norm}}
+\end{figure}
+
+But if we look mare closely at the data we know that in the range from 400MHz to 800MHz only  around 38MHz of these frequencies contains DVB-T channels.
+This makes the detected signal versus the noise biased, since these measurements contained a lot more noise compared to the amount DVB-T channels.
+In order to solve this I calculated the mean and standard deviation to generate a new dataset with even number of samples to generate a nice ROC curve.
+The PDF of these new dataset can be seen in Figure \ref{fig:pdf_tant_norm} and Figure \ref{fig:pdf_lr_norm}.
+These show us that the detection inside the Aerospace building was a lot worse than expected.
 
 \begin{figure}[H]
     \input{../results/tanthof_indoor_roc_norm.pgf}
     \caption{ROC curve from Tanthof based on Normal distribution.\label{fig:roc_tant_norm}}
 \end{figure}
+\begin{figure}[H]
+    \input{../results/lr_indoor_roc_norm.pgf}
+    \caption{ROC curve from Aerospace based on Normal distribution.\label{fig:roc_lr_norm}}
+\end{figure}
+
+If we then take these PDF and generate a new ROC curve from it you get Figure \ref{fig:roc_tant_norm} and Figure \ref{fig:roc_lr_norm}.
+Which immediately shows us that our detector functioned not as good as expected from the first graphs in Figure \ref{fig:roc_lr_real}.
+Also the AUC is much less s before, it dropped with 0.06 for Aerospace and 0.01 for the Tanhof based measurements.
 
 \section{Conclusion}
+As can be seen in the ROC curves the detector functions almost perfectly in reasonable conditions.
+When the conditions are tested to it's limits (in a room with no windows or outside walls) it becomes more difficult to really detect the DVB-T signals.
 
-\bibliography{report}
+To conclude I would like to say that this is an effective way to measure the performance of an DVB-T detector and still great improvements can be made in the way a DVB-T channel can be detected.
+The automation of the whole process makes the generation and calculation of ROC curves extremely easy.
+
 \end{document}
