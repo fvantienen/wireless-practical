@@ -11,7 +11,7 @@
 
 \title{NS3 802.11b Throughput Performance}
 \author{Freek van Tienen \\ 4094123}
-\date{28-04-2016}
+\date{30-04-2016}
 \maketitle
 
 \begin{abstract}
@@ -157,7 +157,7 @@ throughputSumSq += powf(throughput, 2);
 \begin{lstlisting}[frame=bt]
 double throughputMean = throughputSum / staCount;
 double throughputVariance = (throughputSumSq - (powf(throughputSum, 2) / staCount)) / staCount;
-double troughputStd = sqrtf(throughputVariance);
+double throughputStd = sqrtf(throughputVariance);
 \end{lstlisting}
 \caption{Total statistics.\label{fig:tot_stats}}
 \end{figure}
